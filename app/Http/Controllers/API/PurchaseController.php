@@ -32,6 +32,7 @@ class PurchaseController extends Controller
             'items.*.quantity' => 'required|integer'
         ]);
 
+        try{
         $purchaseOrder = PurchaseOrder::create([
             'purchase_type' => $data['purchase_type'],
             'shipment_cost' => $data['shipment_cost'],
@@ -46,7 +47,14 @@ class PurchaseController extends Controller
             'message' => 'Purchase order created successfully',
             'purchase_order' => $purchaseOrder
         ], 201);
+    }catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error creating purchase order',
+            'error' => $e->getMessage()
+        ], 500);
     }
+    }
+
 
     /**
      * Display the specified resource.
