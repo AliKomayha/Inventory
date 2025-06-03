@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Capital extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'amount',
+        'note',
+        'date',
+    ];
+    
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\PurchaseOrder;
 
 class PurchaseController extends Controller
 {
@@ -12,15 +13,8 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $purchaseOrders = PurchaseOrder::all();
+        return response()->json($purchaseOrders);
     }
 
     /**
@@ -28,7 +22,30 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data= $request->validate([
+            'purchase_type' => 'required|string',
+            'shipment_cost' => 'required|numeric',
+            'date' => 'required|date',
+            'items' => 'required|array',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.unit_price' => 'required|numeric',
+            'items.*.quantity' => 'required|integer'
+        ]);
+
+        $purchaseOrder = PurchaseOrder::create([
+            'purchase_type' => $data['purchase_type'],
+            'shipment_cost' => $data['shipment_cost'],
+            'date' => $data['date'],
+        ]);
+
+        foreach ($data['items'] as $item) {
+            $purchaseOrder->items()->create($item);
+        }
+
+        return response()->json([
+            'message' => 'Purchase order created successfully',
+            'purchase_order' => $purchaseOrder
+        ], 201);
     }
 
     /**

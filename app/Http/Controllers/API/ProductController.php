@@ -28,6 +28,7 @@ class ProductController extends Controller
             'wholesale_price' => 'required|numeric',
             'sales_price' => 'required|numeric'
         ]);
+        
         $product = Product::create($request->all());
         return response()->json([
             'message' => 'Product created successfully',
